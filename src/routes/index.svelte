@@ -1,6 +1,7 @@
 <script>
   import Map from "../components/Map.svelte";
-  import MapMarker from "../components/MapMarker.svelte";
+  import FumoMapMarker from "../components/FumoMapMarker.svelte";
+  import VisitedMapMarker from "../components/VisitedMapMarker.svelte";
 </script>
 
 <style>
@@ -46,7 +47,8 @@
 <h1>Great success!</h1>
 
 <Map lat={35} lon={-84} zoom={13}>
-  <MapMarker lat={35.8225} lon={-84.0024} label="Fumos live here" />
+  <FumoMapMarker lat={35.8225} lon={-84.0024} label="Fumos live here" />
+  <VisitedMapMarker lat={35.8225} lon={-84.04} label="Fumos visited here" />
 
 </Map>
 

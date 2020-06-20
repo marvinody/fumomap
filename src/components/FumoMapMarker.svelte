@@ -7,7 +7,14 @@
   export let label;
 
   const addMarker = () => {
-    const marker = new L.marker([lat, lon])
+    const redIcon = new L.Icon.Default({
+      iconUrl: "red-icon.png",
+      imagePath: "/marker-icons/"
+    });
+    console.log({ fumo: redIcon });
+    const marker = new L.marker([lat, lon], {
+      icon: redIcon
+    })
       .addTo($map)
       .bindPopup(label)
       .openPopup();
