@@ -1,17 +1,17 @@
 <script context="module">
   export async function preload(page, session) {
-    return {
-      DISCORD_CLIENT_ID: session.DISCORD_CLIENT_ID
-    };
+    //http://localhost:3000/auth/discord/callback#token_type=Bearer&access_token=DIE72viAsl4qE4woITb7WhNIpbS3La&expires_in=604800&scope=identify+guilds&state=15773059ghq9183habn
+    console.log(page);
   }
 </script>
 
 <script>
-  import Map from "../components/Map.svelte";
-  import FumoMapMarker from "../components/FumoMapMarker.svelte";
-  import VisitedMapMarker from "../components/VisitedMapMarker.svelte";
   import { stores } from "@sapper/app";
+  import getHashParams from "../../../utils/fragmentParser";
+  import DiscordApi from "../../../utils/DiscordApi";
+  import { discordServerId } from "../../../constants";
   const { session } = stores();
+  import { onMount } from "svelte";
 
   export let DISCORD_CLIENT_ID;
   const url = `https://discord.com/api/oauth2/authorize?response_type=token&client_id=${DISCORD_CLIENT_ID}&state=15773059ghq9183habn&scope=identify%20guilds`;
@@ -20,8 +20,16 @@
     const nonce = Math.random();
     sessionStorage.setItem("nonce", nonce.toString());
     window.location = url + "&state=" + nonce;
-    return;
   };
+  onMount(async () => {
+    const params = getHashParams();
+    const api = new DiscordApi(params);
+    const [user, guilds] = await Promise.all([api.getUser(), api.getGuilds()]);
+    if (await api.isInGuild(discordServerId)) {
+      console.log("user is in fumo!");
+    }
+    console.log({ user, guilds });
+  });
 </script>
 
 <style>
@@ -59,24 +67,3 @@
     }
   }
 </style>
-
-<svelte:head>
-  <title>Sapper project template</title>
-</svelte:head>
-
-<h1>Great success!</h1>
-
-<Map lat={35} lon={-84} zoom={13}>
-  <FumoMapMarker lat={35.8225} lon={-84.0024} label="Fumos live here" />
-  <VisitedMapMarker lat={35.8225} lon={-84.04} label="Fumos visited here" />
-
-</Map>
-
-<p>
-  <strong>
-    Try editing this file (src/routes/index.svelte) to test live reloading.
-    <a href="javascript:void()" on:click={clickDiscord}>
-      click here for discord
-    </a>
-  </strong>
-</p>
