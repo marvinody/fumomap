@@ -8,62 +8,49 @@
 <script>
   import { stores } from "@sapper/app";
   import getHashParams from "../../../utils/fragmentParser";
-  import DiscordApi from "../../../utils/DiscordApi";
-  import { discordServerId } from "../../../constants";
+  import Loading from "../../../components/Loading.svelte";
   const { session } = stores();
   import { onMount } from "svelte";
+  import axios from "axios";
+  import { goto } from "@sapper/app";
 
-  export let DISCORD_CLIENT_ID;
-  const url = `https://discord.com/api/oauth2/authorize?response_type=token&client_id=${DISCORD_CLIENT_ID}&state=15773059ghq9183habn&scope=identify%20guilds`;
+  let loading = true;
+  let error = null;
+  let username = null;
+  let html = null;
 
-  const clickDiscord = event => {
-    const nonce = Math.random();
-    sessionStorage.setItem("nonce", nonce.toString());
-    window.location = url + "&state=" + nonce;
-  };
   onMount(async () => {
     const params = getHashParams();
-    const api = new DiscordApi(params);
-    const [user, guilds] = await Promise.all([api.getUser(), api.getGuilds()]);
-    if (await api.isInGuild(discordServerId)) {
-      console.log("user is in fumo!");
+    try {
+      const { data } = await axios.post("/auth/discord/callback", {
+        ...params,
+        clientNonce: sessionStorage.getItem("nonce")
+      });
+      username = data.username;
+      html = data.html;
+      // if we didn't crash, we know the token is good, so let's save it locally
+      $session.discord_token = params.access_token;
+      $session.username = username;
+      setTimeout(() => {
+        goto("/");
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      error = err.response.data.message;
+    } finally {
+      loading = false;
     }
-    console.log({ user, guilds });
   });
 </script>
 
 <style>
-  h1,
-  figure,
-  p {
-    text-align: center;
-    margin: 0 auto;
-  }
 
-  h1 {
-    font-size: 2.8em;
-    text-transform: uppercase;
-    font-weight: 700;
-    margin: 0 0 0.5em 0;
-  }
-
-  figure {
-    margin: 0 0 1em 0;
-  }
-
-  img {
-    width: 100%;
-    max-width: 400px;
-    margin: 0 0 1em 0;
-  }
-
-  p {
-    margin: 1em auto;
-  }
-
-  @media (min-width: 480px) {
-    h1 {
-      font-size: 4em;
-    }
-  }
 </style>
+
+{#if loading}
+  <Loading />
+{:else if error !== null}
+  <h3>{error}</h3>
+{:else}
+  {@html html}
+{/if}

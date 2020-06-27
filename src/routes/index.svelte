@@ -11,16 +11,25 @@
   import FumoMapMarker from "../components/FumoMapMarker.svelte";
   import VisitedMapMarker from "../components/VisitedMapMarker.svelte";
   import { stores } from "@sapper/app";
+  import axios from "axios";
   const { session } = stores();
 
   export let DISCORD_CLIENT_ID;
-  const url = `https://discord.com/api/oauth2/authorize?response_type=token&client_id=${DISCORD_CLIENT_ID}&state=15773059ghq9183habn&scope=identify%20guilds`;
+  const url = `https://discord.com/api/oauth2/authorize?response_type=token&client_id=${DISCORD_CLIENT_ID}&scope=identify%20guilds`;
 
   const clickDiscord = event => {
+    event.preventDefault();
     const nonce = Math.random();
     sessionStorage.setItem("nonce", nonce.toString());
-    window.location = url + "&state=" + nonce;
+    window.location = url + "&state=" + nonce.toString();
     return;
+  };
+
+  const clickLogout = async event => {
+    event.preventDefault();
+    await axios.post("/auth/logout");
+    $session.username = undefined;
+    $session.discord_token = undefined;
   };
 </script>
 
@@ -75,8 +84,11 @@
 <p>
   <strong>
     Try editing this file (src/routes/index.svelte) to test live reloading.
-    <a href="javascript:void()" on:click={clickDiscord}>
-      click here for discord
-    </a>
+    {#if $session.username}
+      Welcome {$session.username}
+      <a href="#" on:click={clickLogout}>Logout</a>
+    {:else}
+      <a href={url} on:click={clickDiscord}>click here for discord</a>
+    {/if}
   </strong>
 </p>
