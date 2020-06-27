@@ -13,6 +13,7 @@
   import { onMount } from "svelte";
   import axios from "axios";
   import { goto } from "@sapper/app";
+  import { notifier } from "sveltoaste";
 
   let loading = true;
   let error = null;
@@ -31,6 +32,7 @@
       // if we didn't crash, we know the token is good, so let's save it locally
       $session.discord_token = params.access_token;
       $session.username = username;
+      notifier.success("You have been logged in!", 3000);
       setTimeout(() => {
         goto("/");
       }, 3000);

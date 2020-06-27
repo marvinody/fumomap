@@ -1,6 +1,6 @@
 <script>
   import Nav from "../components/Nav.svelte";
-
+  import { NotificationDisplay } from "sveltoaste";
   export let segment;
 </script>
 
@@ -22,5 +22,6 @@
 <Nav {segment} />
 
 <main>
+  <NotificationDisplay />
   <slot />
 </main>

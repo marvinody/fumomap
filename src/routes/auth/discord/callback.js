@@ -7,7 +7,6 @@ export async function post(req, res, next) {
   // but what's important is protecting the client from a fake attack I think
   // so we can tell them if something fishy happened...
   const { access_token, token_type, state, clientNonce } = req.body;
-  console.log(req.body);
   if (
     state === undefined ||
     clientNonce === undefined ||
