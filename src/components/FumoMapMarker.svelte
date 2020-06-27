@@ -3,8 +3,8 @@
   import map from "../map";
   let L;
   export let lat;
-  export let lon;
-  export let label;
+  export let lng;
+  export let label = "A fumo lives here";
 
   const addMarker = () => {
     const redIcon = new L.Icon.Default({
@@ -12,7 +12,7 @@
       imagePath: "/marker-icons/"
     });
     console.log({ fumo: redIcon });
-    const marker = new L.marker([lat, lon], {
+    const marker = new L.marker([lat, lng], {
       icon: redIcon
     })
       .addTo($map)

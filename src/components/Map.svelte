@@ -1,5 +1,6 @@
 <script>
-  import { onMount, setContext } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
+
   import storeMap from "../map";
   export let lat;
   export let lon;
@@ -7,6 +8,7 @@
 
   let container;
   let map;
+  const dispatch = createEventDispatcher();
 
   onMount(async () => {
     const L = await import("leaflet");
@@ -22,6 +24,11 @@
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
       storeMap.set(map);
+
+      map.on("click", event => {
+        console.log("map click");
+        dispatch("mapClick", event);
+      });
     };
 
     document.head.appendChild(link);
