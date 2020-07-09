@@ -1,2 +1,2 @@
 export { default as db } from "./db";
-export { User } from "./models";
+export { User, Marker } from "./models";

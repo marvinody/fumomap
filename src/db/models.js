@@ -27,7 +27,7 @@ export const Marker = db.define("marker", {
     default: "fumo",
   },
   latlng: {
-    type: Sequelize.DataTypes.GEOMETRY,
+    type: Sequelize.DataTypes.GEOMETRY("POINT"),
     allowNull: false,
   },
   description: {

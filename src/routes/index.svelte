@@ -1,3 +1,15 @@
+<script context="module">
+  export async function preload() {
+    const res = await this.fetch(`/markers.json`);
+    const data = await res.json();
+    if (res.status === 200) {
+      return { markers: data };
+    } else {
+      this.error(res.status, data.message);
+    }
+  }
+</script>
+
 <script>
   import Map from "../components/Map.svelte";
   import MarkerList from "../components/MarkerList.svelte";
@@ -5,12 +17,8 @@
   import { stores } from "@sapper/app";
 
   const { session } = stores();
-
+  export let markers;
   $: isLoggedIn = Boolean($session.discord_token);
-  let markers = [
-    { type: "fumo", latlng: { lat: 35.8225, lng: -84.0024 } },
-    { type: "visit", latlng: { lat: 35.8225, lng: -84.04 } }
-  ];
   const clickMap = event => {
     console.log("IN INDEX", { event });
     console.log({ latlng: event.detail.latlng });

@@ -1,7 +1,6 @@
 const webpack = require("webpack");
 const path = require("path");
-const exec = require("child_process").exec;
-const { unlink } = require("fs");
+
 const config = require("sapper/config/webpack.js");
 const pkg = require("./package.json");
 
@@ -12,7 +11,6 @@ const alias = { svelte: path.resolve("node_modules", "svelte") };
 const extensions = [".mjs", ".js", ".json", ".svelte", ".html"];
 const mainFields = ["svelte", "module", "browser", "main"];
 
-const generatedSeedFile = "seed_gen.js";
 
 module.exports = {
   client: {
