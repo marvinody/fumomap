@@ -1,5 +1,6 @@
 import DiscordApi from "../../../utils/DiscordApi";
 import { discordServerId } from "../../../constants";
+import { User } from "../../../db/models";
 
 export async function post(req, res, next) {
   // expects a body with access_token and token_type, state, clientNonce
@@ -41,9 +42,23 @@ export async function post(req, res, next) {
       });
     }
 
+    const [dbUser, created] = await User.findOrCreate({
+      where: { discordId: user.id },
+      defaults: {
+        username: user.username,
+        discordId: user.id,
+        discriminator: user.discriminator,
+        avatar: user.avatar,
+      },
+    });
+    if (created) {
+      console.log("new user:", user.username);
+    }
+
     // we know the token is good, so let's save it for now
     req.session.discord_token = access_token;
     req.session.username = user.username;
+    req.session.userId = dbUser.id;
     res.json({
       username: user.username,
       isInFumoServer,
@@ -52,6 +67,7 @@ export async function post(req, res, next) {
 
     console.log(req.session);
   } catch (err) {
+    console.error(err);
     res.status(401).json({
       message:
         "It seems like something happened and your credentials aren't authorized",
