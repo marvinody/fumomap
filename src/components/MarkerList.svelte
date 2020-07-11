@@ -4,10 +4,10 @@
   export let markers;
 </script>
 
-{#each markers as { type, latlng: { lat, lng } }}
+{#each markers as { type, latlng: { lat, lng }, label }}
   {#if type === 'fumo'}
-    <FumoMapMarker {lat} {lng} />
+    <FumoMapMarker {lat} {lng} {label} />
   {:else if type === 'visit'}
-    <VisitedMapMarker {lat} {lng} />
+    <VisitedMapMarker {lat} {lng} {label} />
   {/if}
 {/each}
