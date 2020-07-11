@@ -90,7 +90,7 @@
     </li>
     {#if isLoggedIn}
       <li>
-        <a class="link" href="#" on:click={clickLogout}>logout</a>
+        <a class="link" href="/logout" on:click={clickLogout}>logout</a>
       </li>
     {:else}
       <li>
